@@ -1,0 +1,20 @@
+Filesystem                Size      Used Available Use% Mounted on
+rootfs                  227.8M    210.8M     12.8M  94% /
+ubi0:rootfs             227.8M    210.8M     12.8M  94% /
+tmpfs                     1.0M     80.0K    944.0K   8% /tmp
+tmpfs                   256.0K     88.0K    168.0K  34% /var/run
+none                     10.0M     68.0K      9.9M   1% /dev
+tmpfs                    64.0M      4.0K     64.0M   0% /dev/shm
+/dev/mmcblk0p2            2.0G    993.4M    920.1M  52% /home
+/home/opt                 2.0G    993.4M    920.1M  52% /opt
+/opt/pymaemo/usr/lib/python2.5
+                          2.0G    993.4M    920.1M  52% /usr/lib/python2.5
+/opt/pymaemo/usr/share/pyshared
+                          2.0G    993.4M    920.1M  52% /usr/share/pyshared
+/opt/pymaemo/usr/lib/pyshared
+                          2.0G    993.4M    920.1M  52% /usr/lib/pyshared
+/opt/pymaemo/usr/share/python-support
+                          2.0G    993.4M    920.1M  52% /usr/share/python-support
+/opt/pymaemo/usr/lib/python-support
+                          2.0G    993.4M    920.1M  52% /usr/lib/python-support
+/dev/mmcblk0p1           27.0G     13.7G     13.3G  51% /home/user/MyDocs

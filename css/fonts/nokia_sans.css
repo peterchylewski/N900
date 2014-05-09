@@ -1,0 +1,17 @@
+/*
+@font-face { font-family: 'Nokia Sans'; font-weight: 100; font-style: normal; src: url("nosns.woff");   }
+@font-face { font-family: 'Nokia Sans'; font-weight: 100; font-style: normal; src: url("nosns.ttf");   }
+*/
+
+@font-face {
+	font-family: "Nokia Sans";
+	src: url(NokiaSans/nosns.woff);
+	font-weight: normal;
+}
+
+@font-face {
+	font-family: "Nokia Sans";
+	src: url(NokiaSans/nosnb.woff);
+	font-weight: bold;
+}
+

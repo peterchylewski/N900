@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	
+	<title>Page Title</title>
+
+	<style media="screen">
+		
+		@import url("css/bootstrap/bootstrap.css");
+
+		* {
+			margin: 0;
+			padding: 0;
+			-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+		}
+
+		body {
+			color: white;
+			background: black;
+		}
+		
+		h3 {
+			font-weight: bold;
+			font-size: 1.61em;
+		}
+		
+		td {
+			border: 1px solid #111;
+			text-align: left;
+			vertical-align: top;
+		}
+		
+		td#info {
+			padding: 8px;
+		}
+		
+		table#main {
+			width: 100%;
+		}
+		
+		#in table {
+			border: 0px solid red;
+		}
+		
+		#in table td {
+			border: 0px solid black;
+			background: black;
+			width: 32px;
+			height: 32px;
+		}
+		
+		#in table td:hover {
+			background: white;
+		}
+		
+		#out table {
+			border: 0px solid blue;
+			display: none;
+		}
+		
+		#out table td {
+			border: 0;
+			width: 8px;
+			height: 8px;
+		}
+		
+		.whiteBG {
+			background: white !important;
+		}
+		
+		.key {
+			color: #A4C5DA;
+			font-weight: bold;
+		}
+	</style>
+
+	
+
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script src="js/underscore.js"></script>
+
+	<script>
+
+		'use strict';
+		
+		var currentSpotIndex, moveSpotIntervalID, isScanning;
+		
+		function makeTables() {
+			var rows = 20, cols = 40, index, $destCell, rand;
+			
+			$('#in').html(_.template('table_template', {rows: rows, cols: cols}));
+			$('#out').html(_.template('table_template', {rows: rows, cols: cols}));
+			
+			$('#in td').mouseenter(function() {
+				index = $(this).index() + $(this).parent().index() * cols;
+				console.log('mouseenter', index);
+				//$('#out table td').eq(index).css({backgroundColor: 'white'});
+				
+				rand = Math.floor(Math.random() * 255);
+				$destCell = $('#out table td').eq(index);
+				$destCell.css({backgroundColor: 'rgb(' + rand + ', ' + rand + ', ' + rand + ')'});
+			});
+		}
+		
+		function startScan() {
+			isScanning = true;
+			currentSpotIndex = 0;
+			getData(function(){
+				moveSpot();
+			});
+			//moveSpotIntervalID = setInterval(function() { moveSpot(); }, 100);
+		}
+		
+		function stopScan() {
+			isScanning = false;
+			//moveSpotIntervalID = clearInterval(moveSpotIntervalID);
+		}
+		
+		function moveSpot(bright) {
+			bright = bright * 10;
+			$('#in td').removeClass('whiteBG');
+			$('#in td').eq(currentSpotIndex).addClass('whiteBG').css({backgroundColor: 'rgb(' + bright + ', ' + bright + ', ' + bright + ')'});
+			currentSpotIndex++;
+			//getData(moveSpot());
+		}
+		
+		function getData(callback) {
+			$.get('lux.php', function(data) {
+				console.log('data', data);
+				$('#info').text(data);
+				callback();
+				if (isScanning === true) {
+					getData(function(){
+						moveSpot(data);
+					});
+				}
+				
+			});
+			/*
+			$.getJSON('N900.php', function(json){
+				console.log(JSON.stringify(json, null, 2));
+				$('#info').text(json.sensors.lux);
+				callback();
+				getData(function(){
+					moveSpot(json.sensors.lux);
+				});
+			});
+			*/
+		}
+		$(document).ready(function() {
+			console.log('***ready');
+			
+			makeTables();
+							
+			$('button.start').on('click', function(){
+				getData(startScan());
+			});
+			
+			$('button.stop').on('click', function(){
+				stopScan();
+			});
+			
+			//getData();
+		});
+		
+	</script>
+
+</head>
+<body>
+
+<table id="main">
+	<tr>
+		<td id="info">
+		
+		</td>
+		<td>
+			<button class="btn start">Start</button>
+			<button class="btn stop">Stop</button>
+		</td>
+	</tr>
+	<tr>
+		<td id="in">
+		</td>
+		<td id="out">
+		</td>
+	</tr>
+</table>
+
+<script type="text/template" id="n900_template">
+	<% _.each(data, function(value, key) { %>
+		<div>
+			<h3><%= key %></h3>
+			<ul>
+			<% _.each(value, function(value2, key) { %>
+				<li>
+					<span class="key"><%= key %></span>: <span class="value"><%= value2 %></span>
+				</li>
+			<% }); %>
+			</ul>
+		</div>
+	<% }); %>
+</script>
+
+<script type="text/template" id="table_template">
+<table>
+<% _.each(_.range(0, rows), function(y) { %>
+	<tr>
+	<% _.each(_.range(0, cols), function(x) { %>
+		<td></td>
+	<% }); %>
+	</tr>
+<% }); %>
+</table>
+</script>
+
+	
+</body>
+</html>
