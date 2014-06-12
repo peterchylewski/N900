@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <title>N900 on socks</title>
+	<style>
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+	body {
+		font: 13px Helvetica, Arial;
+	}
+	form {
+		background: #000;
+		padding: 3px;
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+	}
+	form input {
+		border: 0;
+		padding: 10px;
+		width: 90%;
+		margin-right: .5%;
+	}
+	form button {
+		width: 9%;
+		background: rgb(130, 224, 255);
+		border: none;
+		padding: 10px;
+	}
+	#messages {
+		position: absolute;
+		top: 32px;
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+	}
+	#messages li {
+		padding: 5px 10px;
+	}
+	#messages li:nth-child(odd) {
+		background: #eee;
+	}
+	img#ears {
+		position: absolute;
+	}
+	</style>
+	
+	<script src="js/socket.io-1.0.4.js"></script>
+	<script src="js/jquery-1.11.1.js"></script>
+	<script src="js/jquery-ui-1.10.4.custom.min.js"></script>
+	<script src="js/underscore-min.js"></script>
+	
+	<script>
+	
+
+	function sendObj(name, obj) {
+		socket.emit(name, JSON.stringify(obj, null, 2));
+	}
+	
+	var socket = io('http://192.168.1.105:3000/');
+		
+	$(document).ready(function() {
+		console.log('***ready');
+		
+		socket.on('chat message', function(msg) {
+			console.log('message recieved:', msg);
+			$('#messages').append($('<li>').text(msg));
+		});
+		
+		socket.on('json message', function(msg) {
+			console.log('json recieved:', JSON.parse(msg));
+		});
+			
+	});
+	
+	</script>
+ </head>
+ <body>
+	foo
+ </body>
+</html>
