@@ -6,7 +6,6 @@ var fs 		= require('fs');
 
 var N900 = require('./N900');
 
-
 var PATH_TO_PUBLIC = __dirname + '/public';
 
 app.use(express.static(PATH_TO_PUBLIC));
@@ -18,22 +17,44 @@ app.get('/*', function(req, res) {
 });
 
 io.on('connection', function(socket) {
+	
 	console.log('a user connected');
+	
 	io.emit('chat message', 'hi');
+	
+	socket.on('*', function(msg) {
+		console.log('something received');
+	});
+	
+	socket.on('cmd', function(msg, value) {
+		
+		console.log('cmdx: ' + msg);
+		console.log('valuex: ' + value);
+		
+		switch(msg) {
+			case 'setVolume':
+				N900.setVolume(value, function(data) {
+					io.emit('value', 'volume', data);
+				});
+			break;
+			case 'getVolume':
+				N900.getVolume(function(data) {
+					io.emit('value', 'volume', data);
+				});
+			break;
+		}
+	});
+	
 	socket.on('chat message', function(msg) {
 		console.log('message: ' + msg);
 		io.emit('chat message', msg);
 	});
+	
 	socket.on('json message', function(msg) {
 		console.log('message: ' + msg);
 		io.emit('json message', msg);
 	});
-	socket.on('json drag', function(msg) {
-		socket.broadcast.emit('json drag', msg);
-	});
-	socket.on('jpeg', function(msg) {
-		socket.broadcast.emit('jpeg', msg);
-	});
+
 });
 
 http.listen(3000, function() {

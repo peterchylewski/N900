@@ -2,50 +2,55 @@
 <html>
   <head>
     <title>N900 on socks</title>
-	<style>
-	* {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
-	body {
-		font: 13px Helvetica, Arial;
-	}
-	form {
-		background: #000;
-		padding: 3px;
-		position: fixed;
-		bottom: 0;
-		width: 100%;
-	}
-	form input {
-		border: 0;
-		padding: 10px;
-		width: 90%;
-		margin-right: .5%;
-	}
-	form button {
-		width: 9%;
-		background: rgb(130, 224, 255);
-		border: none;
-		padding: 10px;
-	}
-	#messages {
-		position: absolute;
-		top: 32px;
-		list-style-type: none;
-		margin: 0;
-		padding: 0;
-	}
-	#messages li {
-		padding: 5px 10px;
-	}
-	#messages li:nth-child(odd) {
-		background: #eee;
-	}
-	img#ears {
-		position: absolute;
-	}
+	<style media="screen">
+		
+		@import url("css/bootstrap.min.css");
+		@import url("css/jquery-ui-1.10.4.custom.min.css");
+		
+		* {
+			font: 11px/1.4em "Lucida Grande", Helvetica, Arial, sans-serif;
+			text-rendering: optimizeLegibility;
+			-webkit-font-smoothing: antialiased; 
+			margin: 0;
+			padding: 0;
+			outline: 0 !important;
+			-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+		}
+		
+		*,
+		*:hover,
+		*:visited {
+			outline: none !important;
+		}
+
+		body {
+			margin: 32px;
+			color: #333;
+			background: #fff;
+		}
+		
+		h1, h2, h3, h4, h5, h6 {
+			font-weight: bold;
+		}
+		
+		h1 { font-size: 2em; } h2 { font-size: 1.8em; }
+		
+		* + h1, * + h2, * + h3, * + h4, * + h5, * + h6 {
+			margin-top: 16px;
+		}
+		
+		ul, ol {
+			list-style-position: inside;
+		}
+		
+		* + p {
+			margin-top: 8px;
+		}
+		
+		div + div {
+			margin-top: 32px !important;
+		}
+	
 	</style>
 	
 	<script src="js/socket.io-1.0.4.js"></script>
@@ -55,7 +60,6 @@
 	
 	<script>
 	
-
 	function sendObj(name, obj) {
 		socket.emit(name, JSON.stringify(obj, null, 2));
 	}
@@ -66,12 +70,43 @@
 		console.log('***ready');
 		
 		socket.on('chat message', function(msg) {
-			console.log('message recieved:', msg);
-			$('#messages').append($('<li>').text(msg));
+			console.log('value recieved:', name, msg);
+			switch(msg) {
+				case 'hi':
+					socket.emit('cmd', 'getVolume');
+				break;
+			}
+		});
+		
+		socket.on('value', function(name, value) {
+			console.log('value recieved:', name, value);
+			
+			switch(name) {
+				case 'volume':
+					$("#slider").slider('value', value);
+				break;
+			}
 		});
 		
 		socket.on('json message', function(msg) {
 			console.log('json recieved:', JSON.parse(msg));
+		});
+		
+		$("#slider").slider({
+			min: 0,
+			max: 99,
+			value: 15,
+			slide: function(event, ui) {
+				console.log('foo');
+			},
+			stop: function(event, ui) {
+				console.log('bar', ui.value);
+				socket.emit('cmd', 'setVolume', ui.value);
+			}
+		});
+		
+		$('button[data-action="foo"]').click(function() {
+			socket.emit('cmd', 'getVolume');
 		});
 			
 	});
@@ -79,6 +114,11 @@
 	</script>
  </head>
  <body>
-	foo
+	<div>
+		<div id="slider"></div>
+	</div>
+	<div>
+		<button class="btn btn-xs btn-primary" data-action="foo">alala</button>
+	</div>
  </body>
 </html>
