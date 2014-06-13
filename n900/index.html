@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	
+	<title>MyNoki</title>
+
+	<style media="screen">
+		
+		/*
+		@import url("css/bootstrap/bootstrap.css");
+		*/
+		@import url("../css/fonts/nokia_sans.css");
+
+		* {
+			margin: 0;
+			padding: 0;
+			-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		body {
+			font-family: 'Nokia Sans';
+			font-size: 12px;
+			line-height: 1.4em;
+			/*letter-spacing: 0.01em;*/
+			color: #aaa;
+			background: white;
+			margin: 32px;
+		}
+		
+		h1 {
+			color: #124191;
+			font-weight: bold;
+			font-size: 2.5em;
+			cursor: pointer;
+		}
+		
+		h3 {
+			color: #124191;
+			font-weight: bold;
+			font-size: 1.61em;
+			text-transform: capitalize;
+			margin-top: 0;
+			margin-bottom: .25em;
+		}
+		
+		td {
+			border: 0px solid #eee;
+			text-align: left;
+			vertical-align: top;
+		}
+		
+		table#main {
+			width: 100%;
+		}
+		
+		table#main td#info div:first-child h3 {
+			margin-top: 0;
+		}
+		
+		td {
+			vertical-align: top;
+		}
+		
+		td#lorem {
+			padding-top: 32px;
+		}
+		
+		div {
+			border: 0px solid #eee;
+			float: left;
+			display: inline-block;
+			margin: 16px;
+		}
+		
+		ul li {
+			list-style-type: none;
+		}
+		
+		ul ul li {
+			margin-left: 16px;
+		}
+		
+		ul li + li {
+			margin-top: 2px;
+		}
+		
+		span.value {
+			color: #124191;
+		}
+				
+		.yellow {
+			color: #fc0 !important;
+		}
+	
+	</style>
+
+	<script src="../js/jquery-1.11.1.min.js"></script>
+	<script src="../js/underscore.js"></script>
+	<script>
+
+		'use strict';
+			
+		function getData(callback) {
+			$.getJSON('N900.php', function(json){
+				console.log(JSON.stringify(json, null, 2));
+				$('#info').html(_.template('n900_template', {data: json}));
+				if (typeof callback !== 'undefined') {
+					callback();
+				}
+			});
+		}
+		
+		$(document).ready(function() {
+			console.log('***ready');
+			$('h1').on('click', function() {
+				$(this).addClass('yellow');
+				var that = this;
+				getData(function(){
+					console.log('callback');
+					console.log(that);
+					$(that)
+						.removeClass('yellow');
+				});
+			});
+			getData();
+		});
+		
+	</script>
+
+</head>
+<body>
+
+
+<table id="main">
+	<tr>
+		<td id="info"></td>
+		<td><h1>N900</h1></td>
+	</tr>
+	<tr>
+		<td id="lorem">
+			Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.
+		</td>
+	</tr>
+</table>
+
+<script type="text/template" id="n900_template">
+	<% _.each(data, function(value, key) { %>
+		<div>
+			<h3><%= key %></h3>
+			<ul>
+			<% _.each(value, function(value2, key) { %>
+				<li>
+					<span class="key"><%= key %>: </span>
+					<% if (typeof value2 === 'string') { %>
+						<span class="value"><%= value2 %></span>
+					<% } else { %>
+						<ul>
+						<% _.each(value2, function(value3, key3) { %>
+							<li>
+								<span class="key"><%= key3 %>: </span>
+								<span class="value"><%= value3 %></span>
+							</li>
+						<% }); %>
+						</ul>	
+					<% } %>
+				</li>
+			<% }); %>
+			</ul>
+		</div>
+	<% }); %>
+</script>
+
+</body>
+</html>

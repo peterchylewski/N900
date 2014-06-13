@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+	<style>
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+	body {
+		font: 13px Helvetica, Arial;
+	}
+	form {
+		background: #000;
+		padding: 3px;
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+	}
+	form input {
+		border: 0;
+		padding: 10px;
+		width: 90%;
+		margin-right: .5%;
+	}
+	form button {
+		width: 9%;
+		background: rgb(130, 224, 255);
+		border: none;
+		padding: 10px;
+	}
+	#messages {
+		position: absolute;
+		top: 32px;
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+	}
+	#messages li {
+		padding: 5px 10px;
+	}
+	#messages li:nth-child(odd) {
+		background: #eee;
+	}
+	img#ears {
+		position: absolute;
+	}
+	</style>
+	
+	<script src="js/socket.io-1.0.4.js"></script>
+	<script src="js/jquery-1.11.1.js"></script>
+	<script src="js/jquery-ui-1.10.4.custom.min.js"></script>
+	<script src="js/underscore-min.js"></script>
+	
+	<script>
+	
+
+	function sendObj(name, obj) {
+		socket.emit(name, JSON.stringify(obj, null, 2));
+	}
+	
+	function getBase64ImageData($img) {
+		console.log('getBase64Image');
+		
+		var img = $img.get(0),
+			canvas,
+			data;
+
+		canvas = document.createElement('canvas');
+		canvas.width = img.width;
+		canvas.height = img.height;
+		
+		context = canvas.getContext('2d');
+		context.drawImage(img, 0, 0);
+		
+		data = canvas.toDataURL('image/jpeg');
+		
+		return data;
+	}
+	
+	var socket = io();
+		
+	$(document).ready(function() {
+		console.log('***ready');
+				
+		$('img').draggable({
+			drag: function(e) {
+				sendObj('json drag', {
+					'top': $(this).css('top'),
+					'left': $(this).css('left')
+					}
+				);
+			}
+		});
+		
+		var audio = document.getElementsByTagName('audio')[0];
+		
+		socket.on('chat message', function(msg) {
+			//audio.play();
+			console.log('message recieved:', msg);
+			$('#messages').append($('<li>').text(msg));
+		});
+		
+		socket.on('json message', function(msg) {
+			//audio.play();
+			console.log('json recieved:', JSON.parse(msg));
+		});
+		
+		socket.on('json drag', function(msg) {
+			//audio.play();
+			var obj = JSON.parse(msg);
+			$('img').css({
+				top: obj.top,
+				left: obj.left
+			})
+		});
+		
+		// http://www.websector.de/blog/2011/12/22/pushing-binary-image-data-using-node-js-and-socket-io/
+		socket.on('jpeg', function(msg) {
+			console.log('jpeg recieved:', msg);
+			$('img#ears').attr('src', msg);
+			$('img').remove();
+			var $newImg = $('<img id="ears">').attr('src', msg).prependTo('body');
+		});
+		
+		$('form').submit(function() {
+			socket.emit('chat message', $('#m').val());
+			$('#m').val('');
+			var data = getBase64ImageData($('img#ears').eq(0));
+			socket.emit('jpeg', data);
+			return false;
+		});
+	
+	});
+	
+	</script>
+ </head>
+  <body>
+
+	<audio>
+	   <source src="assets/pop.ogg" type='audio/ogg; codecs="vorbis"'>
+	</audio>
+	<img id="ears" src="assets/acoustic_location_devices_001.jpg">
+	
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+
+  </body>
+</html>
