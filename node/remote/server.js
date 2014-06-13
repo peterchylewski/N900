@@ -1,16 +1,16 @@
-var express = require('express');
-var app 	= express();
-var http 	= require('http').Server(app);
-var io 		= require('socket.io')(http);
-var fs 		= require('fs');
-
-var N900 = require('./N900');
+var express = require('express'),
+	app 	= express(),
+	http 	= require('http').Server(app),
+	io 		= require('socket.io')(http),
+	fs 		= require('fs');
 
 var PATH_TO_PUBLIC = __dirname + '/public';
 
 app.use(express.static(PATH_TO_PUBLIC));
 
 //console.log(fs.readdirSync(PATH_TO_CLIENT + '/assets'));
+
+var N900 = require('./N900');
 
 app.get('/*', function(req, res) {
 	res.sendfile(PATH_TO_PUBLIC + '/index.html');
@@ -28,8 +28,8 @@ io.on('connection', function(socket) {
 	
 	socket.on('cmd', function(msg, value) {
 		
-		console.log('cmdx: ' + msg);
-		console.log('valuex: ' + value);
+		console.log('cmd: ' + msg);
+		console.log('value: ' + value);
 		
 		switch(msg) {
 			case 'setVolume':
@@ -40,6 +40,16 @@ io.on('connection', function(socket) {
 			case 'getVolume':
 				N900.getVolume(function(data) {
 					io.emit('value', 'volume', data);
+				});
+			break;
+			case 'setBrightness':
+				N900.setBrightness(value, function(data) {
+					io.emit('value', 'brightness', data);
+				});
+			break;
+			case 'vibrate':
+				N900.vibrate(function(data) {
+					io.emit('value', 'foo', data);
 				});
 			break;
 		}

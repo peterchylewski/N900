@@ -83,7 +83,10 @@
 			
 			switch(name) {
 				case 'volume':
-					$("#slider").slider('value', value);
+					$("#slider.volume").slider('value', value);
+				break;
+				case 'brightness':
+					$("#slider.brightness").slider('value', value);
 				break;
 			}
 		});
@@ -92,21 +95,24 @@
 			console.log('json recieved:', JSON.parse(msg));
 		});
 		
-		$("#slider").slider({
+		$("#slider.volume").slider({
 			min: 0,
 			max: 99,
-			value: 15,
-			slide: function(event, ui) {
-				console.log('foo');
-			},
 			stop: function(event, ui) {
-				console.log('bar', ui.value);
 				socket.emit('cmd', 'setVolume', ui.value);
 			}
 		});
 		
+		$("#slider.brightness").slider({
+			min: 0,
+			max: 255,
+			stop: function(event, ui) {
+				socket.emit('cmd', 'setBrightness', ui.value);
+			}
+		});
+		
 		$('button[data-action="foo"]').click(function() {
-			socket.emit('cmd', 'getVolume');
+			socket.emit('cmd', 'vibrate');
 		});
 			
 	});
@@ -115,10 +121,11 @@
  </head>
  <body>
 	<div>
-		<div id="slider"></div>
+		<div id="slider" class="volume"></div>
+		<div id="slider" class="brightness"></div>
 	</div>
 	<div>
-		<button class="btn btn-xs btn-primary" data-action="foo">alala</button>
+		<button class="btn btn-xs btn-primary" data-action="foo">vibrate</button>
 	</div>
  </body>
 </html>
