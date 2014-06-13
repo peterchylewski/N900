@@ -1,18 +1,30 @@
 var express = require('express'),
 	app 	= express(),
 	http 	= require('http').Server(app),
+	url 	= require('url'),
+	mime 	= require('mime'),
 	io 		= require('socket.io')(http),
 	fs 		= require('fs');
 
+// set path to public directory
 var PATH_TO_PUBLIC = __dirname + '/public';
-
 app.use(express.static(PATH_TO_PUBLIC));
+
+// set mime types	
+mime.define({
+	'image/png': ['png']
+});
+
+
 
 //console.log(fs.readdirSync(PATH_TO_CLIENT + '/assets'));
 
 var N900 = require('./N900');
 
 app.get('/*', function(req, res) {
+	var request = url.parse(req.url, true),
+		action = request.pathname;
+	console.log(action);
 	res.sendfile(PATH_TO_PUBLIC + '/index.html');
 });
 
