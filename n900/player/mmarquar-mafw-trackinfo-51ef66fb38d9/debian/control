@@ -1,0 +1,15 @@
+Source: mafw-trackinfo
+Section: unknown
+Priority: extra
+Maintainer: Malte Marquarding <malte@marquarding.com>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: mafw-trackinfo
+Architecture: any
+Depends: mafw-gst-renderer, python-dbus, python-gst0.10, python-gobject, libhildon-thumbnail0
+Description: A dbus wrapper around media metadata
+ The metadata for the currently playing song in MAFW is spread through
+ several interfaces and signals. It is also lacking album art.
+ This "daemon" processes these and presents a more sensible interface.
+

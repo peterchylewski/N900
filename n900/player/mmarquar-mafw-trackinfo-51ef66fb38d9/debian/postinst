@@ -1,0 +1,3 @@
+#!/bin/sh
+chmod +x /opt/mafw-trackinfo/mafw_trackinfo.py
+start --quiet mafw_trackinfo

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+stop --quiet mafw_trackinfo
+mpid=$(ps |grep [m]afw_trackinfo.py | awk '{print $1}')
+if [ -n "$mpid" ]; then killall -9 "$mpid"; fi
